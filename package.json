@@ -1,0 +1,31 @@
+{
+  "name": "itsam_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "./node_modules/nodemon/bin/nodemon.js server.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "izabayopaci8@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "encryptly": "^1.0.0",
+    "express": "^4.18.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.7",
+    "node-fetch": "^3.3.2",
+    "pdfkit": "^0.15.0",
+    "postgres": "^3.4.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
