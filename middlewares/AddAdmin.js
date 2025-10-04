@@ -17,7 +17,7 @@ const AddAdmin = async (req, res, next) => {
     const encryptedPassword =  encrypt(password,encryptionKey)
 
     const databaseSave = await database`
-    insert into admins (id,fullname,email,password,imageurl,superuser) values (${id},${fullname},${email},${encryptedPassword},'http://localhost:5000/images/admins/default','false')
+    insert into admins (id,fullname,email,password,imageurl,superuser) values (${id},${fullname},${email},${encryptedPassword},'https://itsam-backend.onrender.com/images/admins/default','false')
     `;
 
     res.status(200);
