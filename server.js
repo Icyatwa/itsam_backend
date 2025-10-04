@@ -76,7 +76,7 @@ const app = express();
 app.use(express.json())
 // using the cors middleware 
 const corsOptions = {
-  origin: ['http://localhost:5173','http://localhost:5174','http://localhost:4173','http://localhost:4174','http://localhost:4175','http://localhost:4176','http://localhost:4177','http://localhost:4178','http://localhost:5001'],//(https://your-client-app.com)
+  origin: ['http://localhost:5173','http://localhost:5174','http://localhost:4173','http://localhost:4174', 'https://itsam-frontend.vercel.app/','https://itsam-backend.onrender.com','http://localhost:4175','http://localhost:4176','http://localhost:4177','http://localhost:4178','http://localhost:5001'],//(https://your-client-app.com)
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions))
