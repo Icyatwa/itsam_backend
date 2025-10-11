@@ -3,23 +3,18 @@ import postgres from "postgres";
 // importing the environmental variable for database connection 
 import 'dotenv/config'
 
-// getting the environmental variables 
-const database_host = process.env.DB_URL
-const database_port = process.env.DB_PORT
-const database_name = process.env.DB_NAME
-const database_user = process.env.DB_USER
-const database_pass = process.env.DB_PASSWORD
+// Option 1: Use DATABASE_URL (Recommended for Render)
+const database = process.env.DATABASE_URL 
+  ? postgres(process.env.DATABASE_URL, {
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : false
+    })
+  : postgres({
+      host: process.env.DB_URL,
+      port: parseInt(process.env.DB_PORT) || 5432,
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : false
+    });
 
-// postgres oprions to use in connection 
-const PGOPTIONS = {
-    'host':database_host,
-    'port':database_port,
-    'database':database_name,
-    'user':database_user,
-    'password':database_pass
-}
-
-// connecting to the online database 
-const database = postgres('postgresql://postgres:KgZWfeGUzzrGspZdDiGPqqDCzXubERCf@viaduct.proxy.rlwy.net:41501/railway',PGOPTIONS)
-
-export default database
+export default database;
