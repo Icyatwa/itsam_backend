@@ -105,7 +105,7 @@ app.get("/", Authenticate, (req, res) => {
 app.get("/keys", Getkey);
 
 // products routes 
-app.get("/products", GetProducts);
+app.get("/products", Authenticate, GetProducts);
 app.get("/products/:productid", Authenticate, GetProduct)
 app.patch("/product/:productid", Authenticate, upload.any(), UpdateProduct)
 app.post("/products", Authenticate, upload.any(), AddProduct);
