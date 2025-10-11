@@ -1,3 +1,49 @@
+// database.js
+import postgres from "postgres";
+// importing the environmental variable for database connection 
+import 'dotenv/config'
+
+// Option 1: Use DATABASE_URL (Recommended for Render)
+const database = process.env.DATABASE_URL 
+  ? postgres(process.env.DATABASE_URL, {
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : false
+    })
+  : postgres({
+      host: process.env.DB_URL,
+      port: parseInt(process.env.DB_PORT) || 5432,
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : false
+    });
+
+export default database;
+
+// Getproducts.js
+import database from "../backend/database.js";
+
+const GetProducts = async (req, res, next) => {
+  // getting the list of available products
+  try {
+    const products = await database`
+    select * from products
+    `;
+    res.status(200);
+    res.json({'data': products }).end();
+  } catch (err) {
+    res.status(500);
+    res
+      .json({
+        error: "failed to get products",
+        message: "failed to get products due to some error",
+      })
+      .end();
+  }
+};
+
+export default GetProducts;
+
+// server.js
 // importing and configuring the environmental variables
 import "dotenv/config";
 // importing the express module to use for the server
@@ -105,7 +151,7 @@ app.get("/", Authenticate, (req, res) => {
 app.get("/keys", Getkey);
 
 // products routes 
-app.get("/products", GetProducts);
+app.get("/products", Authenticate, GetProducts);
 app.get("/products/:productid", Authenticate, GetProduct)
 app.patch("/product/:productid", Authenticate, upload.any(), UpdateProduct)
 app.post("/products", Authenticate, upload.any(), AddProduct);
@@ -193,3 +239,60 @@ app.post('/login', Authenticate, upload.none(), Login)
 
 // server listening for requests on port
 app.listen(PORT, console.log(`server started listening on port ${PORT}`));
+
+// Home.tsx
+import PopUpForm from "./../components/PopUpForm";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Product from "./../components/Product";
+import Loader from "./../components/Loader";
+import Toaster from "./../components/Toaster";
+
+export default function Home() {
+    const [popUp,setPopUp] = useState(false)
+    const [isLoading,setIsLoading] = useState(true)
+    const [data,setData] = useState([])
+    const [toaster,setToaster] = useState(false)
+    const [toasterMesage,setToasterMessage] = useState("")
+    const [productId,setProductId] = useState("")
+    
+    useEffect(()=>{
+      const dataHandler = async()=>{
+        const apiKey = "dGVzdGluZ2FwaWtleXRvdXNl"
+        const header = {'apiKey':apiKey}
+        const response:any = await axios.get('https://itsam-backend.onrender.com/products',{headers:header})
+        .catch(err=>{
+          setToaster(false)
+          setToasterMessage(err.message)
+          setToaster(true)
+        })
+        .finally(()=>{
+          setIsLoading(false)
+        })
+        
+        setData(response.data.data)
+      }
+  
+      if(isLoading){
+        try{
+          dataHandler()
+        }catch(err){
+          console.log(err)
+        }
+      }
+    },[])
+  return (
+    <>
+    {toaster && <Toaster message={toasterMesage}/>}
+    <div className="services">
+      {isLoading && <Loader />}
+      {
+        data.map((service :any)=>{
+          return <Product key={service.id} data={service} setPopUp={setPopUp} setProductId={setProductId}/>
+        })
+      }
+      {popUp && <PopUpForm setToaster={setToaster} setToasterMessage={setToasterMessage} productid={productId}/>}
+    </div>
+    </>
+  );
+}
